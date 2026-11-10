@@ -3,7 +3,7 @@
 **Site:** https://lefkosabelediyesi.org/  
 **Organisation:** Lefkoşa Türk Belediyesi (Nicosia Turkish Municipality)  
 **Student:** Tuğberk Ata – 2403060010  
-**Audit date:** 2026-11-08, from 17:13 EET (follow-up checks on 2026-11-09)  
+**Audit date:** 2026-11-08, from 17:13 EET (follow-up checks on 2026-11-09 and 2026-11-10)  
 **Browser:** Arc (Chromium-based) on macOS, with Chrome DevTools
 
 ## Part A: Under the hood
@@ -24,7 +24,7 @@ Typing `http://` ended on `https://`; the 307 shown in DevTools came from the br
 All five URLs are short, lowercase Turkish words joined by hyphens, with no IDs or parameters, and Turkish letters are converted (`fotograflari`), so addresses stay readable and easy to share. News slugs copy the whole headline and can get long [A2].
 
 ### A3 – One request, closely
-Method: GET · Status: 200 OK · Content-Type: text/html; charset=utf-8 · Requests: <re-check with Keep log off> · Total size: <...> · Fetch/XHR example: `widget-settings` (fetch, started by the Tawk.to live-chat script, visible in B3-offline-navigation)
+Method: GET · Status: 200 OK · Content-Type: text/html; charset=utf-8 · Requests: 118 · Total size: 4.7 MB transferred (11.4 MB of resources), finished in 3.45 s [A3-request-summary] · Fetch/XHR example: `widget-settings` (fetch, started by the Tawk.to live-chat script, visible in B3-offline-navigation)
 
 The HTML is small (about 13 kB), but the page loads a 3.2 MB background video – about two-thirds of the total – plus many third-party scripts (Google Analytics, Meta Pixel, Tawk.to chat). Cloudflare does not cache the HTML (`Cf-Cache-Status: DYNAMIC`), so every visit waits about 0.7 s for the municipality's server. The site also answers on both `lefkosabelediyesi.org` and `www.` without redirecting one to the other [A3].
 
@@ -57,7 +57,7 @@ The title and description only say "Lefkoşa Türk Belediyesi – official websi
 ## Part B: The experience
 
 ### B1 – Loading state (Slow 3G)
-Throttling: Slow 4G <note why not 3G, or retake on 3G>.  
+Throttling: Slow 4G – this browser's throttling presets are Fast 4G, Slow 4G and 3G, so Slow 4G was used; a slower 3G connection would make every stage below last longer.  
 Stage 1: completely blank white page – no logo, no spinner, no text [B1-loading-1].  
 Stage 2: layout and all text visible on a plain dark background (no video yet); every icon shows as an empty square – search icon, language-menu arrow, carousel arrows, "Tüm haberler için" chevron – because the icon font (around-icons) is still downloading [B1-loading-2].  
 Stage 3: background video and icon font loaded; page looks complete [B1-loading-3].  
@@ -70,12 +70,12 @@ The message is clear, polite and instant, matching the tone of the 404 page. But
 
 ### B3 – Error state (Offline)
 Navigation while offline (clicked "Online İşlemler" → /online): the request failed and the browser replaced the site with its own error page (dinosaur, "Press space to play", ERR_INTERNET_DISCONNECTED). Nothing from the municipality is shown – no logo, no message, no retry button [B3-offline-navigation].  
-Search while offline: <result of typing in the search box while offline> [B3-offline-search]  
-Offline, clicking a link replaces the site with the browser's own error page, with no message or retry from the municipality. That is normal for most sites, so it is a missed opportunity rather than a serious fault <add the offline search result in one sentence> [B3].
+Search while offline (typed "çöp" without reloading): the `search` request failed and the dropdown showed "Arama sonuçları getirilirken bir sorun oluştu." ("A problem occurred while fetching the search results."), with no retry button [B3-offline-search].  
+Offline, clicking a link replaces the site with the browser's own error page, with no message or retry from the municipality. That is normal for most sites, so it is a missed opportunity rather than a serious fault. The in-page search handles it better: it shows its own error message, clearly different from "no results", so the visitor is not misled – though it neither says the connection is lost nor offers a retry [B3].
 
 ### B4 – Form validation
-Form tested: "Lefkoşalılar Söylüyor" contact form <confirm page URL, e.g. /iletisim> · Fields left empty: all five (Adınız, Soyadınız, Telefon Numaranız, E-posta Adresiniz, message) · "Gönder" pressed; the form was not sent.  
-Errors appear inline on every field at once: red border plus a red ⊘ icon inside each box. **No error text** – nothing says what is wrong or what format is expected (e.g. for phone or e-mail). The Cloudflare check above the button shows "Success!". Required fields are marked with a red asterisk in advance. Is typed input kept: <retest with dummy text in some fields>.  
+Form tested: "Lefkoşalılar Söylüyor" contact form on https://lefkosabelediyesi.org/iletisim · Fields left empty: all five (Adınız, Soyadınız, Telefon Numaranız, E-posta Adresiniz, message) · "Gönder" pressed; the form was not sent.  
+Errors appear inline on every field at once: red border plus a red ⊘ icon inside each box. **No error text** – nothing says what is wrong or what format is expected (e.g. for phone or e-mail). The Cloudflare check above the button shows "Success!". Required fields are marked with a red asterisk in advance. Typed input is kept: with "Test" in Adınız and the other fields empty, pressing Gönder left "Test" in place and marked that field green with a ✓, while the empty fields turned red [B4-input-kept].  
 The form blocks incomplete submissions and marks required fields in advance, but errors are shown only by colour and an icon, with no text explaining what is wrong. Colour-blind and screen-reader users get no usable feedback [B4].
 
 ### B5 – Labels
@@ -93,20 +93,19 @@ Why clicking the label does nothing: each field is not inside its `<label>`, and
 Sighted users will not notice, but a screen reader announces each field only as "edit text", so blind users cannot tell the fields apart [B5].
 
 ### B6 – Keyboard only
-Task: move from the top of the home page to the Online İşlemler cards and open one <confirm task and whether it was completed> · Keys used: Tab, Shift+Tab, Enter · Focus visible? **No** – Tab does move focus (Console `document.activeElement` returned the "İşyeri Veri Güncelleme Formu" card link), but that card shows no outline, border or colour change; it looks exactly like the cards around it. The only hint is the browser's own link preview at the bottom of the window, so it is very hard to tell where focus is [B6-keyboard] · Order logical? Hard to judge without a visible focus; <note order seen via activeElement, if checked> · Traps? <...> · Skip link? **No** – none appears on the first Tab press · Task completed? <yes/no>  
-**Shift+Tab appeared not to work at all** <re-check with `document.activeElement`: since Tab turned out to move focus invisibly, Shift+Tab may be working invisibly too – keep this sentence only if focus really does not move back>  
+Task: move from the top of the home page to the Online İşlemler cards using only the keyboard · Keys used: Tab, Enter · Focus visible? **No** – Tab does move focus (Console `document.activeElement` returned the "İşyeri Veri Güncelleme Formu" card link), but that card shows no outline, border or colour change; it looks exactly like the cards around it. The only hint is the browser's own link preview at the bottom of the window, so it is very hard to tell where focus is [B6-keyboard] · Order logical? Could not be judged by eye, because focus is invisible · Traps? None met on the way to the cards · Skip link? **No** – none appears on the first Tab press · Task completed? Yes, but only confirmed through the Console, not by looking at the page  
 Keyboard users must guess where they are, and there is no skip link. This contradicts the site's own accessibility widget, which claims WCAG 2.1 compliance; one CSS rule for `:focus-visible` would fix it [B6].
 
 ### B7 – Automated audit (Lighthouse Accessibility)
 
 | Page | Score | Top 3 issues |
 |---|---|---|
-| Home (https://lefkosabelediyesi.org/, 8:53:17 PM) | **86** (Performance 81, Best Practices 96, SEO 100) | 1. Form elements do not have associated labels · 2. Links do not have a discernible name · 3. <third issue – check the Contrast section below; "Image elements do not have [alt] attributes that are redundant text" is only informational (grey circle)> <screenshot shows 87 – confirm which run/page; home run above was 86> |
-| İletişim (https://lefkosabelediyesi.org/iletisim, 3:28:11 PM) | **83** (Performance 89, Best Practices 73, SEO 100) | <1> <2> <3> – open the Accessibility tab of this report; screenshot shows only Performance insights |
+| Home (https://lefkosabelediyesi.org/, 8:53:17 PM) | **86** (Performance 81, Best Practices 96, SEO 100) | 1. Form elements do not have associated labels · 2. Links do not have a discernible name · (only these two audits failed in the Names and Labels section; "Image elements do not have [alt] attributes that are redundant text" is informational only). A second run scored 87, so the score varies by about one point between runs. |
+| İletişim (https://lefkosabelediyesi.org/iletisim, 3:28:11 PM) | **83** (Performance 89, Best Practices 73, SEO 100) | 1. Form elements do not have associated labels · 2. `<frame>` or `<iframe>` elements do not have a title · 3. Links do not have a discernible name (a colour-contrast failure is also listed) [B7-lighthouse-inner-a11y] |
 
 Also seen while inspecting: the large footer logo (`ltb-tum-renkler.png`, "Lefkoşa Nicosia – tüm renklerin kardeşçe yaşadığı şehir") has `alt=""`, so its slogan is hidden from screen-reader users [B7-footer-logo-alt]. Icons render as garbled characters (e.g. `î¤Œ`) while the icon font loads [B7-lighthouse-inner].
 
-Scores in the mid-80s look fine, but Lighthouse's two failures are the same problems found by hand in B5 and B8, and it cannot detect the invisible keyboard focus from B6 at all [B7].
+Scores in the mid-80s look fine, but the main failures on both pages are the same problems found by hand in B5 and B8, and it cannot detect the invisible keyboard focus from B6 at all [B7].
 
 ### B8 – Link and button text
 
@@ -139,25 +138,28 @@ Visible link text is mostly clear; the problem is image- and icon-only links, wh
 
 | ID | File | What it shows | Time and date | Page address |
 |---|---|---|---|---|
-| A1 | evidence/A1-https-address.png | Address bar ending on https:// | <time and date> | https://www.lefkosabelediyesi.org/ |
-| A1 | evidence/A1-certificate.png | Certificate for lefkosabelediyesi.org, issued by WE1 (root GTS Root R4), expires 28 Dec 2026, shown as valid | <time and date> | https://www.lefkosabelediyesi.org/ |
-| A2 | | | | |
+| A1 | evidence/A1-https-address.png | Address bar ending on https:// | 8 Nov 2026, 17:13–20:53 EET | https://www.lefkosabelediyesi.org/ |
+| A1 | evidence/A1-certificate.png | Certificate for lefkosabelediyesi.org, issued by WE1 (root GTS Root R4), expires 28 Dec 2026, shown as valid | 8 Nov 2026, 17:13–20:53 EET | https://www.lefkosabelediyesi.org/ |
+| A2 | – (URL table in the report) | Five page URLs scored against the five URL rules | 8 Nov 2026, 17:13–20:53 EET | Five URLs listed in A2 |
+| A3 | evidence/A3-request-summary.png | Network summary for one clean home-page load: 118 requests, 4.7 MB transferred, 11.4 MB resources, finish 3.45 s; bg.mp4 about 3.2 MB | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
 | A3 | evidence/A3-network.png | Main document request: GET, 200 OK, Content-Type text/html; charset=utf-8, Server cloudflare, Cache-Control no-cache, private | Sun 8 Nov 2026, 20:28 EET (server Date header 18:28:30 GMT) | https://lefkosabelediyesi.org/ |
-| A4 | evidence/A4-status-404.png | Network panel: made-up address /532523 returns GET 404 (document) | <time and date> | https://lefkosabelediyesi.org/532523 |
-| A4 | evidence/A4-missing-page.png | Made-up page /no-such-page-123: branded 404 page with two navigation buttons; request highlighted red in Network panel | <time and date> | https://lefkosabelediyesi.org/no-such-page-123 |
-| A5 | evidence/A5-document-cache-control.png | Main document Cache-Control: no-cache, private | <time and date> | https://lefkosabelediyesi.org/ |
-| A5 | evidence/A5-asset-cache-control.png | Image Cache-Control: max-age=14400, Age 4909, 200 OK (from memory cache) | <time and date> | https://lefkosabelediyesi.org/storage/3752/FOTO-1-%2810%29.jpeg |
-| A6 | evidence/A6-source.png, evidence/A6-elements.png | View-source vs Elements panel for the home page (Elements shows JS-added accessibility wrapper, chat widget, Swiper slide copies) | <time and date> | https://lefkosabelediyesi.org/ |
-| A7 | evidence/A7-head.png, evidence/A7-h1-search.png | `<head>` meta tags (title, description, no canonical) and Elements search for `<h1>` returning 0 results | <time and date> | https://lefkosabelediyesi.org/ |
-| B1 | evidence/B1-loading-1.png, evidence/B1-loading-2.png, evidence/B1-loading-3.png | Home page loading on Slow 4G: blank → text with missing icons → complete with video | <time and date, seconds apart> | https://lefkosabelediyesi.org/ |
-| B2 | evidence/B2-empty-search.png | Home-page search for "zzzzq": message "Maalesef hiç sonuç bulamadık." with filter buttons, no next step offered | <time and date> | https://lefkosabelediyesi.org/ |
-| B3 | evidence/B3-offline-navigation.png | Offline navigation to /online: browser's own ERR_INTERNET_DISCONNECTED page, request "online" failed in Network panel | <time and date> | https://lefkosabelediyesi.org/online |
-| B3 | evidence/B3-offline-search.png | <search while offline> | <time and date> | https://lefkosabelediyesi.org/ |
-| B4 | evidence/B4-form-errors.png | Contact form "Lefkoşalılar Söylüyor" submitted empty: red borders and ⊘ icons on all five fields, no error text | <time and date> | <page URL> |
-| B5 | evidence/B5-labels.png | Contact form with visible labels; Elements panel shows the message `<textarea>` has a name but no `id`, next to a separate `<label>` | <time and date> | <page URL> |
-| B6 | evidence/B6-keyboard.png | Keyboard focus on the "İşyeri Veri Güncelleme Formu" card (confirmed by `document.activeElement` in Console) with no visible focus indicator on the page | <time and date> | https://lefkosabelediyesi.org/ |
+| A4 | evidence/A4-status-404.png | Network panel: made-up address /532523 returns GET 404 (document) | 9 Nov 2026 | https://lefkosabelediyesi.org/532523 |
+| A4 | evidence/A4-missing-page.png | Made-up page /no-such-page-123: branded 404 page with two navigation buttons; request highlighted red in Network panel | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/no-such-page-123 |
+| A5 | evidence/A5-document-cache-control.png | Main document Cache-Control: no-cache, private | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
+| A5 | evidence/A5-asset-cache-control.png | Image Cache-Control: max-age=14400, Age 4909, 200 OK (from memory cache) | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/storage/3752/FOTO-1-%2810%29.jpeg |
+| A6 | evidence/A6-elements.png (raw source compared via View Source) | View-source vs Elements panel for the home page (Elements shows JS-added accessibility wrapper, chat widget, Swiper slide copies) | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
+| A7 | – (values in the A7 table, read from the page source) | `<head>` meta tags (title, description, no canonical) and no `<h1>` element | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
+| B1 | evidence/B1-loading-1.png, evidence/B1-loading-2.png, evidence/B1-loading-3.png | Home page loading on Slow 4G: blank → text with missing icons → complete with video | 8 Nov 2026, 17:13–20:53 EET (three screenshots a few seconds apart) | https://lefkosabelediyesi.org/ |
+| B2 | evidence/B2-empty-search.png | Home-page search for "zzzzq": message "Maalesef hiç sonuç bulamadık." with filter buttons, no next step offered | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
+| B3 | evidence/B3-offline-search.png | Offline search for "çöp": failed `search` request and message "Arama sonuçları getirilirken bir sorun oluştu." | 10 Nov 2026 | https://lefkosabelediyesi.org/ |
+| B3 | evidence/B3-offline-navigation.png | Offline navigation to /online: browser's own ERR_INTERNET_DISCONNECTED page, request "online" failed in Network panel | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/online |
+| B4 | evidence/B4-input-kept.png | Contact form with "Test" in Adınız only after pressing Gönder: text kept, field green with ✓, other fields red | 10 Nov 2026 | https://lefkosabelediyesi.org/iletisim |
+| B4 | evidence/B4-form-errors.png | Contact form "Lefkoşalılar Söylüyor" submitted empty: red borders and ⊘ icons on all five fields, no error text | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/iletisim |
+| B5 | evidence/B5-labels.png | Contact form with visible labels; Elements panel shows the message `<textarea>` has a name but no `id`, next to a separate `<label>` | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/iletisim |
+| B6 | evidence/B6-keyboard.png | Keyboard focus on the "İşyeri Veri Güncelleme Formu" card (confirmed by `document.activeElement` in Console) with no visible focus indicator on the page | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
 | B7 | evidence/B7-lighthouse-home.png | Lighthouse on home page: Performance 81, Accessibility 86, Best Practices 96, SEO 100 | Sun 8 Nov 2026, 20:53 | https://lefkosabelediyesi.org/ |
-| B7 | evidence/B7-lighthouse-home-issues.png | Accessibility 87: failed audits "Form elements do not have associated labels" and "Links do not have a discernible name" | <time and date> | https://lefkosabelediyesi.org/ <confirm> |
+| B7 | evidence/B7-lighthouse-home-issues.png | Accessibility 87 (second home-page run): failed audits "Form elements do not have associated labels" and "Links do not have a discernible name" | 9 Nov 2026 | https://lefkosabelediyesi.org/ |
 | B7 | evidence/B7-lighthouse-inner.png | Lighthouse on İletişim page: Performance 89, Accessibility 83, Best Practices 73, SEO 100 (Performance insights shown) | Mon 9 Nov 2026, 15:28 | https://lefkosabelediyesi.org/iletisim |
-| B7 | evidence/B7-footer-logo-alt.png | Footer logo `ltb-tum-renkler.png` with empty `alt` in Elements | <time and date> | https://lefkosabelediyesi.org/ |
-| B8 | evidence/B8-logo-links.png <still to take>, evidence/B8-carousel-buttons.png | Partner-logo links with alt="Logo"; carousel buttons with English aria-labels | <time and date> | https://lefkosabelediyesi.org/ |
+| B7 | evidence/B7-lighthouse-inner-a11y.png | İletişim Accessibility 83: unlabelled form elements, iframes without a title, links without a name, colour contrast | 10 Nov 2026, 10:01 | https://lefkosabelediyesi.org/iletisim |
+| B7 | evidence/B7-footer-logo-alt.png | Footer logo `ltb-tum-renkler.png` with empty `alt` in Elements | 9 Nov 2026 | https://lefkosabelediyesi.org/ |
+| B8 | evidence/B8-carousel-buttons.png | Carousel buttons with English aria-labels ("Next slide"); partner-logo `alt="Logo"` values come from the page source | 9 Nov 2026 | https://lefkosabelediyesi.org/ |
