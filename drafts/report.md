@@ -24,9 +24,9 @@ Typing `http://` ended on `https://`; the 307 shown in DevTools came from the br
 All five URLs are short, lowercase Turkish words joined by hyphens, with no IDs or parameters, and Turkish letters are converted (`fotograflari`), so addresses stay readable and easy to share. News slugs copy the whole headline and can get long [A2].
 
 ### A3 – One request, closely
-Method: GET · Status: 200 OK · Content-Type: text/html; charset=utf-8 · Requests: 118 · Total size: 4.7 MB transferred (11.4 MB of resources), finished in 3.45 s [A3-request-summary] · Fetch/XHR example: `widget-settings` (fetch, started by the Tawk.to live-chat script, visible in B3-offline-navigation)
+Method: GET · Status: 200 OK · Content-Type: text/html; charset=utf-8 · Requests: 111 · Total size: 9.3 MB of resources (only 17.6 kB transferred, because this repeat visit was served from the browser cache) · Load: 1.05 s [A3-request-summary] · Fetch/XHR example: `widget-settings` (fetch, started by the Tawk.to live-chat script, visible in B3-offline-navigation)
 
-The HTML is small (about 13 kB), but the page loads a 3.2 MB background video – about two-thirds of the total – plus many third-party scripts (Google Analytics, Meta Pixel, Tawk.to chat). Cloudflare does not cache the HTML (`Cf-Cache-Status: DYNAMIC`), so every visit waits about 0.7 s for the municipality's server. The site also answers on both `lefkosabelediyesi.org` and `www.` without redirecting one to the other [A3].
+The HTML is small (about 13 kB), but the page loads a 3.2 MB background video – about a third of its 9.3 MB of resources – plus many third-party scripts (Google Analytics, Meta Pixel, Tawk.to chat). Cloudflare does not cache the HTML (`Cf-Cache-Status: DYNAMIC`), so every visit waits about 0.7 s for the municipality's server. The site also answers on both `lefkosabelediyesi.org` and `www.` without redirecting one to the other [A3].
 
 ### A4 – A page that does not exist
 Status code: **404** (a second made-up address, `/532523`, also returned GET 404 for the document [A4-status-404]) · Visitor sees: large "404", "Maalesef aradığınız sayfayı bulamadık." ("Sorry, we couldn't find the page you were looking for."), buttons "Ana Sayfaya Dön" (back to home) and "Online İşlemlere Dön" (back to online services).  
@@ -141,7 +141,7 @@ Visible link text is mostly clear; the problem is image- and icon-only links, wh
 | A1 | evidence/A1-https-address.png | Address bar ending on https:// | 8 Nov 2026, 17:13–20:53 EET | https://www.lefkosabelediyesi.org/ |
 | A1 | evidence/A1-certificate.png | Certificate for lefkosabelediyesi.org, issued by WE1 (root GTS Root R4), expires 28 Dec 2026, shown as valid | 8 Nov 2026, 17:13–20:53 EET | https://www.lefkosabelediyesi.org/ |
 | A2 | – (URL table in the report) | Five page URLs scored against the five URL rules | 8 Nov 2026, 17:13–20:53 EET | Five URLs listed in A2 |
-| A3 | evidence/A3-request-summary.png | Network summary for one clean home-page load: 118 requests, 4.7 MB transferred, 11.4 MB resources, finish 3.45 s; bg.mp4 about 3.2 MB | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/ |
+| A3 | evidence/A3-request-summary.png | Network summary for one home-page load with Keep log off: 111 requests, 17.6 kB transferred (cached repeat visit), 9.3 MB resources, Load 1.05 s | 10 Nov 2026 | https://lefkosabelediyesi.org/ |
 | A3 | evidence/A3-network.png | Main document request: GET, 200 OK, Content-Type text/html; charset=utf-8, Server cloudflare, Cache-Control no-cache, private | Sun 8 Nov 2026, 20:28 EET (server Date header 18:28:30 GMT) | https://lefkosabelediyesi.org/ |
 | A4 | evidence/A4-status-404.png | Network panel: made-up address /532523 returns GET 404 (document) | 9 Nov 2026 | https://lefkosabelediyesi.org/532523 |
 | A4 | evidence/A4-missing-page.png | Made-up page /no-such-page-123: branded 404 page with two navigation buttons; request highlighted red in Network panel | 8 Nov 2026, 17:13–20:53 EET | https://lefkosabelediyesi.org/no-such-page-123 |
