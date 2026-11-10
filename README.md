@@ -19,7 +19,6 @@ SFWE475 / CPRG201 – Assignment 2: Website Field Study
 | `report.pdf` | Parts A, B and C (max 6 pages) + evidence-log appendix |
 | `owner-summary.pdf` | One-page plain-language summary for the site owner |
 | `evidence/` | Original screenshots, named by checklist ID (e.g. `A1-certificate.png`, `B4-form-errors.png`) |
-| `drafts/` | Markdown sources of the report and owner summary, exported to the PDFs above |
 
 ## AI tool use
 
